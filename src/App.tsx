@@ -32,15 +32,23 @@ function App() {
     validate: zodResolver(scheme),
   })
 
-  const onSubmit = useCallback((values: FormValues) => {
+  const onSubmit = useCallback(async (values: FormValues) => {
     const { answer, numbers } = values
-    const res = calcJamaica(numbers, answer)
-    setResults(res)
+
+    try {
+      const res = await calcJamaica(numbers, answer)
+      await setResults(res)
+    } catch (e) {
+      console.error(e)
+    }
   }, [])
 
   return (
     <div className='mx-auto max-w-150 w-80vw'>
       <h1 className='text-center'>Jamaica</h1>
+      <div className='mx-auto w-60'>
+        <img src='/jamaica.webp' alt='' />
+      </div>
 
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
