@@ -14,6 +14,7 @@ specifiers:
   vite: ^4.1.0
   vite-plugin-windicss: ^1.8.10
   windicss: ^3.5.6
+  zod: ^3.20.6
 
 dependencies:
   '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
@@ -22,6 +23,7 @@ dependencies:
   '@mantine/hooks': 6.0.0_react@18.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  zod: 3.20.6
 
 devDependencies:
   '@types/react': 18.0.28
@@ -1446,4 +1448,8 @@ packages:
   /yaml/1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
+    dev: false
+
+  /zod/3.20.6:
+    resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}
     dev: false
