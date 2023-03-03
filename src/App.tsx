@@ -1,37 +1,11 @@
 import { useCallback, useState } from 'react'
-import { Accordion, Button, Flex, NumberInput, Stack } from '@mantine/core'
-import { Numbers, calcJamaica } from './calcJamaica'
-import { useForm, zodResolver } from '@mantine/form'
-import { z } from 'zod'
-
-type FormValues = {
-  answer: number
-  numbers: Numbers
-}
-
-const scheme = z.object({
-  numbers: z
-    .number()
-    .min(1, { message: '白いサイコロの目は1以上で入力して下さい' })
-    .max(6, { message: '白いサイコロの目は6以下で入力して下さい' })
-    .array(),
-  answer: z
-    .number()
-    .min(11, { message: '黒いサイコロの目の和は11以上で入力して下さい' })
-    .max(66, { message: '黒いサイコロの目の和は66以下で入力して下さい' }),
-})
+import { Accordion } from '@mantine/core'
+import { calcJamaica } from './calcJamaica'
+import { Form, FormValues } from './Form'
 
 function App() {
   const [results, setResults] = useState<string[]>()
   const [isExecuted, setExecuted] = useState(false)
-
-  const form = useForm<FormValues>({
-    initialValues: {
-      answer: 11,
-      numbers: [1, 2, 3, 4, 5],
-    },
-    validate: zodResolver(scheme),
-  })
 
   const onSubmit = useCallback((values: FormValues) => {
     const { answer, numbers } = values
@@ -48,40 +22,9 @@ function App() {
         <img src='/jamaica.webp' alt='' />
       </div>
 
-      <form onSubmit={form.onSubmit(onSubmit)} className='mt-4'>
-        <Stack>
-          {form.values.numbers.map((v, index) => (
-            <NumberInput
-              {...form.getInputProps(`numbers.${index}`)}
-              key={index}
-              min={1}
-              max={6}
-              label={`白い目${index + 1}`}
-              size='md'
-            />
-          ))}
-
-          <NumberInput
-            {...form.getInputProps('answer')}
-            min={11}
-            max={66}
-            label={'黒い目の合計'}
-            size='md'
-          />
-
-          <div className='rounded-full border-emerald-700 border-b-4 mt-4 hover:(border-white transform translate-y-4px) '>
-            <Button
-              type='submit'
-              color='teal'
-              size='lg'
-              radius='xl'
-              className='w-full'
-            >
-              実行
-            </Button>
-          </div>
-        </Stack>
-      </form>
+      <div className='mt-4'>
+        <Form onSubmit={onSubmit} />
+      </div>
 
       {isExecuted && (
         <Accordion className='mt-10'>
