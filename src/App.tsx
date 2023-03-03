@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Button, NumberInput, Stack } from '@mantine/core'
+import { Accordion, Button, Flex, NumberInput, Stack } from '@mantine/core'
 import { Numbers, calcJamaica } from './calcJamaica'
 import { useForm, zodResolver } from '@mantine/form'
 import { z } from 'zod'
@@ -23,6 +23,7 @@ const scheme = z.object({
 
 function App() {
   const [results, setResults] = useState<string[]>()
+  const [isExecuted, setExecuted] = useState(false)
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -34,23 +35,29 @@ function App() {
 
   const onSubmit = useCallback((values: FormValues) => {
     const { answer, numbers } = values
+
     const res = calcJamaica(numbers, answer)
     setResults(res)
+    setExecuted(true)
   }, [])
 
   return (
-    <div className='mx-auto max-w-150 w-80vw'>
+    <div className='mx-auto mt-4 max-w-150 pb-25 w-90vw'>
       <h1 className='text-center'>Jamaica</h1>
+      <div className='mx-auto w-60'>
+        <img src='/jamaica.webp' alt='' />
+      </div>
 
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form onSubmit={form.onSubmit(onSubmit)} className='mt-4'>
         <Stack>
-          {form.values.numbers.map((v, i) => (
+          {form.values.numbers.map((v, index) => (
             <NumberInput
-              {...form.getInputProps(`numbers.${i}`)}
-              key={i}
+              {...form.getInputProps(`numbers.${index}`)}
+              key={index}
               min={1}
               max={6}
-              label={'白い目'}
+              label={`白い目${index + 1}`}
+              size='md'
             />
           ))}
 
@@ -59,15 +66,88 @@ function App() {
             min={11}
             max={66}
             label={'黒い目の合計'}
+            size='md'
           />
 
-          <Button type='submit' className='mt-10'>
-            実行
-          </Button>
+          <div className='rounded-full border-emerald-700 border-b-4 mt-4 hover:(border-white transform translate-y-4px) '>
+            <Button
+              type='submit'
+              color='teal'
+              size='lg'
+              radius='xl'
+              className='w-full'
+            >
+              実行
+            </Button>
+          </div>
         </Stack>
       </form>
 
-      {JSON.stringify(results)}
+      {isExecuted && (
+        <Accordion className='mt-10'>
+          <Accordion.Item value='customization'>
+            <Accordion.Control className='bg-gray-50'>
+              出来るか出来ないか
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className='flex my-6 justify-center'>
+                {results?.length ? (
+                  <div
+                    className='rounded-md bg-blue-500 text-white py-2 px-6 text-2xl inline-block
+                '
+                  >
+                    出来る
+                  </div>
+                ) : (
+                  <div className='text-center'>
+                    <div
+                      className='rounded-md bg-red-500 text-white py-2 px-6 text-2xl inline-block
+              '
+                    >
+                      出来ない
+                    </div>
+                    <p className='mt-4 text-sm text-left text-gray-600'>
+                      ※当プログラムの処理で出来ないだけなので、出来る可能性があります。
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {results?.length ? (
+                <Accordion>
+                  <Accordion.Item value='flexibility'>
+                    <Accordion.Control className='bg-gray-50'>
+                      答えを1つだけ見る
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <div className='my-6 text-center text-lg'>
+                        {results[0]}
+                      </div>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+
+                  <Accordion.Item value='focus-ring'>
+                    <Accordion.Control className='bg-gray-50'>
+                      全部の答えを見る
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <div className='my-2 text-center text-lg'>
+                        {results.map((result, index) => (
+                          <div className='border-b py-4' key={index}>
+                            {result}
+                          </div>
+                        ))}
+                      </div>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                </Accordion>
+              ) : (
+                ''
+              )}
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      )}
     </div>
   )
 }
