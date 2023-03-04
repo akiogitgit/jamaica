@@ -6,13 +6,19 @@ import { Form, FormValues } from './Form'
 function App() {
   const [results, setResults] = useState<string[]>()
   const [isExecuted, setExecuted] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
   const onSubmit = useCallback((values: FormValues) => {
     const { answer, numbers } = values
+    setLoading(true)
+    setExecuted(false)
 
-    const res = calcJamaica(numbers, answer)
-    setResults(res)
-    setExecuted(true)
+    setTimeout(() => {
+      const res = calcJamaica(numbers, answer)
+      setResults(res)
+      setLoading(false)
+      setExecuted(true)
+    })
   }, [])
 
   return (
@@ -25,6 +31,12 @@ function App() {
       <div className='mt-4'>
         <Form onSubmit={onSubmit} />
       </div>
+
+      {isLoading && (
+        <div className='mx-auto h-58 mt-4 animate-spin w-60'>
+          <img src='/jamaica.webp' alt='' />
+        </div>
+      )}
 
       {isExecuted && (
         <Accordion className='mt-10'>
