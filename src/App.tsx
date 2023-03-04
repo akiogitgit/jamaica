@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className='mx-auto mt-4 max-w-150 pb-25 w-90vw'>
-      <h1 className='text-center'>Jamaica</h1>
+      <h1 className='font-mono text-center'>ジャマイカ 自動判定ツール</h1>
       <div className='mx-auto w-60'>
         <img src='/jamaica.webp' alt='' />
       </div>
