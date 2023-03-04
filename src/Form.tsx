@@ -1,25 +1,87 @@
 import { Stack, NumberInput, Button, Flex } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { FC, useCallback } from 'react'
-import { Numbers } from './calcJamaica'
 import { z } from 'zod'
 import { useMediaQuery } from '@mantine/hooks'
 
-export type FormValues = {
-  answer: number
-  numbers: Numbers
-}
-const scheme = z.object({
-  numbers: z
-    .number()
-    .min(1, { message: '白いサイコロの目は1以上で入力して下さい' })
-    .max(6, { message: '白いサイコロの目は6以下で入力して下さい' })
-    .array(),
+// 入力はnumber | null
+// 送信する時は、nullを許可しない
+const schema = z.object({
+  numbers: z.tuple([
+    z
+      .number()
+      .min(1, { message: '1以上で入力して下さい' })
+      .max(6, { message: '6以下で入力して下さい' })
+      .nullable()
+      .transform((val, ctx): number => {
+        if (val === null) {
+          ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+        }
+        return val ?? 0
+      }),
+    z
+      .number()
+      .min(1, { message: '1以上で入力して下さい' })
+      .max(6, { message: '6以下で入力して下さい' })
+      .nullable()
+      .transform((val, ctx): number => {
+        if (val === null) {
+          ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+        }
+        return val ?? 0
+      }),
+    z
+      .number()
+      .min(1, { message: '1以上で入力して下さい' })
+      .max(6, { message: '6以下で入力して下さい' })
+      .nullable()
+      .transform((val, ctx): number => {
+        if (val === null) {
+          ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+        }
+        return val ?? 0
+      }),
+    z
+      .number()
+      .min(1, { message: '1以上で入力して下さい' })
+      .max(6, { message: '6以下で入力して下さい' })
+      .nullable()
+      .transform((val, ctx): number => {
+        if (val === null) {
+          ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+        }
+        return val ?? 0
+      }),
+    z
+      .number()
+      .min(1, { message: '1以上で入力して下さい' })
+      .max(6, { message: '6以下で入力して下さい' })
+      .nullable()
+      .transform((val, ctx): number => {
+        if (val === null) {
+          ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+        }
+        return val ?? 0
+      }),
+  ]),
   answer: z
     .number()
-    .min(11, { message: '黒いサイコロの目の和は11以上で入力して下さい' })
-    .max(66, { message: '黒いサイコロの目の和は66以下で入力して下さい' }),
+    .min(11, { message: '11以上で入力して下さい' })
+    .max(66, { message: '66以下で入力して下さい' })
+    .nullable()
+    .transform((val, ctx): number => {
+      if (val === null) {
+        ctx.addIssue({ code: 'custom', message: '入力は必須です' })
+      }
+      return val ?? 0
+    }),
 })
+
+// z.input<typeof schema> nullとユニオン
+// z.output<typeof schema>
+export type FormValues = z.output<typeof schema>
+
+type NullableFormValues = z.input<typeof schema>
 
 type Props = {
   onSubmit: (params: FormValues) => void
@@ -28,12 +90,12 @@ type Props = {
 export const Form: FC<Props> = ({ onSubmit }) => {
   const matches = useMediaQuery('(min-width: 640px)')
 
-  const form = useForm<FormValues>({
+  const form = useForm<NullableFormValues | FormValues>({
     initialValues: {
-      answer: 11,
-      numbers: [1, 2, 3, 4, 5],
+      answer: null,
+      numbers: [null, null, null, null, null],
     },
-    validate: zodResolver(scheme),
+    validate: zodResolver(schema),
   })
 
   const rollDice = useCallback(() => {
@@ -52,7 +114,13 @@ export const Form: FC<Props> = ({ onSubmit }) => {
   }, [])
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form
+      onSubmit={form.onSubmit(e => {
+        const res = schema.parse(e)
+        console.log(res)
+        onSubmit(res)
+      })}
+    >
       <Stack>
         <Flex>
           {form.values.numbers.map((v, index) => (
