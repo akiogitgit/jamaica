@@ -4,6 +4,7 @@ const operators = ['+', '-', '*', '/']
 const n = 4
 
 export const calcJamaica = (numbers: Numbers, answer: number) => {
+  console.time()
   const results: string[] = []
   let resultCount = 0
 
@@ -38,18 +39,12 @@ export const calcJamaica = (numbers: Numbers, answer: number) => {
     strOperators: string = '',
     len: number = 0,
   ) {
+    if (resultCount > 10) {
+      return
+    }
+
     // 記号が4つで計算する
     // ex) res = 1 + 2 + 3 + 4 + 5
-    // if (len === 4) {
-    //   const calcFormula = `${nums[0]}${strOperators[0]}${nums[1]}${strOperators[1]}${nums[2]}${strOperators[2]}${nums[3]}${strOperators[3]}${nums[4]}`
-    //   const calcResult = looseJsonParse(calcFormula)
-
-    //   if (calcResult !== answer) return
-
-    //   results.push(`${calcFormula}=${calcResult}`)
-
-    //   return
-    // }
     if (len === 4) {
       const [a, b, c, d, e] = nums
       const [O1, O2, O3, O4] = strOperators
@@ -124,6 +119,7 @@ export const calcJamaica = (numbers: Numbers, answer: number) => {
     }
   }
 
+  console.timeEnd()
   return results
 }
 
