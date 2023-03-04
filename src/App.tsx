@@ -32,10 +32,13 @@ function App() {
         <Form onSubmit={onSubmit} />
       </div>
 
-      {isLoading && (
-        <div className='mx-auto h-58 mt-4 animate-spin w-60'>
-          <img src='/jamaica.webp' alt='' />
-        </div>
+      <div
+        className={`mx-auto h-58 mt-4 animate-spin w-60 ${
+          !isLoading && 'hidden'
+        }`}
+      >
+        <img src='/jamaica.webp' alt='' />
+      </div>
       )}
 
       {isExecuted && (
