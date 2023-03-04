@@ -1,8 +1,9 @@
-import { Stack, NumberInput, Button } from '@mantine/core'
+import { Stack, NumberInput, Button, Flex } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { FC } from 'react'
-import { Numbers, calcJamaica } from './calcJamaica'
+import { FC, useCallback } from 'react'
+import { Numbers } from './calcJamaica'
 import { z } from 'zod'
+import { useMediaQuery } from '@mantine/hooks'
 
 export type FormValues = {
   answer: number
@@ -25,6 +26,8 @@ type Props = {
 }
 
 export const Form: FC<Props> = ({ onSubmit }) => {
+  const matches = useMediaQuery('(min-width: 640px)')
+
   const form = useForm<FormValues>({
     initialValues: {
       answer: 11,
@@ -33,21 +36,39 @@ export const Form: FC<Props> = ({ onSubmit }) => {
     validate: zodResolver(scheme),
   })
 
+  const rollDice = useCallback(() => {
+    const val1 = Math.round(Math.random() * (6 - 1) + 1)
+    const val2 = Math.round(Math.random() * (6 - 1) + 1)
+    const val3 = Math.round(Math.random() * (6 - 1) + 1)
+    const val4 = Math.round(Math.random() * (6 - 1) + 1)
+    const val5 = Math.round(Math.random() * (6 - 1) + 1)
+    const val6 = Math.round(Math.random() * (6 - 1) + 1)
+    const val10 = Math.round(Math.random() * (6 - 1) + 1) * 10
+
+    form.setValues({
+      numbers: [val1, val2, val3, val4, val5],
+      answer: val6 + val10,
+    })
+  }, [])
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
-        {form.values.numbers.map((v, index) => (
-          <NumberInput
-            {...form.getInputProps(`numbers.${index}`)}
-            key={index}
-            min={1}
-            max={6}
-            label={`白い目${index + 1}`}
-            size='md'
-          />
-        ))}
+        <Flex>
+          {form.values.numbers.map((v, index) => (
+            <NumberInput
+              {...form.getInputProps(`numbers.${index}`)}
+              key={index}
+              min={1}
+              max={6}
+              label={`${index === 0 ? '白い目' : ' '}`}
+              size='md'
+            />
+          ))}
+        </Flex>
 
         <NumberInput
+          className='w-30'
           {...form.getInputProps('answer')}
           min={11}
           max={66}
@@ -55,17 +76,29 @@ export const Form: FC<Props> = ({ onSubmit }) => {
           size='md'
         />
 
-        <div className='rounded-full border-emerald-700 border-b-4 mt-4 hover:(border-white transform translate-y-4px) '>
-          <Button
-            type='submit'
-            color='teal'
-            size='lg'
-            radius='xl'
-            className='w-full'
-          >
-            実行
-          </Button>
-        </div>
+        <Flex align='center' gap='sm' className='mt-4'>
+          <div className='rounded-md border-sky-700 border-b-4 hover:(border-white transform translate-y-4px) '>
+            <Button
+              onClick={rollDice}
+              color='blue'
+              size={`${matches ? 'lg' : 'md'}`}
+              className='w-full'
+            >
+              サイコロを転がす
+            </Button>
+          </div>
+          <div className='rounded-full border-emerald-700 border-b-4 w-1/1 hover:(border-white transform translate-y-4px) '>
+            <Button
+              type='submit'
+              color='teal'
+              size={`${matches ? 'lg' : 'md'}`}
+              radius='xl'
+              className='w-full'
+            >
+              判定
+            </Button>
+          </div>
+        </Flex>
       </Stack>
     </form>
   )
