@@ -5,6 +5,7 @@ const n = 4
 
 export const calcJamaica = (numbers: Numbers, answer: number) => {
   const results: string[] = []
+  let resultCount = 0
 
   // 数字を総当たりで並び替え
   // 12345, 12354, 12435, 12453, ...
@@ -39,13 +40,80 @@ export const calcJamaica = (numbers: Numbers, answer: number) => {
   ) {
     // 記号が4つで計算する
     // ex) res = 1 + 2 + 3 + 4 + 5
+    // if (len === 4) {
+    //   const calcFormula = `${nums[0]}${strOperators[0]}${nums[1]}${strOperators[1]}${nums[2]}${strOperators[2]}${nums[3]}${strOperators[3]}${nums[4]}`
+    //   const calcResult = looseJsonParse(calcFormula)
+
+    //   if (calcResult !== answer) return
+
+    //   results.push(`${calcFormula}=${calcResult}`)
+
+    //   return
+    // }
     if (len === 4) {
-      const calcFormula = `${nums[0]}${strOperators[0]}${nums[1]}${strOperators[1]}${nums[2]}${strOperators[2]}${nums[3]}${strOperators[3]}${nums[4]}`
-      const calcResult = looseJsonParse(calcFormula)
+      const [a, b, c, d, e] = nums
+      const [O1, O2, O3, O4] = strOperators
 
-      if (calcResult !== answer) return
+      const bracketsPatterns = [
+        `${a}${O1}${b}${O2}${c}${O3}${d}${O4}${e}`,
+        `(${a}${O1}${b})${O2}${c}${O3}${d}${O4}${e}`,
+        `${a}${O1}(${b}${O2}${c})${O3}${d}${O4}${e}`,
+        `${a}${O1}${b}${O2}(${c}${O3}${d})${O4}${e}`,
+        `${a}${O1}${b}${O2}${c}${O3}(${d}${O4}${e})`,
+        `(${a}${O1}${b}${O2}${c})${O3}${d}${O4}${e}`,
+        `${a}${O1}(${b}${O2}${c}${O3}${d})${O4}${e}`,
+        `${a}${O1}${b}${O2}(${c}${O3}${d}${O4}${e})`,
+        `(${a}${O1}${b}${O2}${c}${O3}${d})${O4}${e}`,
+        `${a}${O1}(${b}${O2}${c}${O3}${d}${O4}${e})`,
+        `(${a}${O1}${b})${O2}(${c}${O3}${d})${O4}${e}`,
+        `${a}${O1}(${b}${O2}${c})${O3}(${d}${O4}${e})`,
+        `(${a}${O1}${b})${O2}${c}${O3}(${d}${O4}${e})`,
+        `(${a}${O1}${b}${O2}${c})${O3}(${d}${O4}${e})`,
+        `(${a}${O1}${b})${O2}(${c}${O3}${d}${O4}${e})`,
+        `((${a}${O1}${b})${O2}${c})${O3}${d}${O4}${e}`,
+        `${a}${O1}((${b}${O2}${c})${O3}${d})${O4}${e}`,
+        `${a}${O1}${b}${O2}((${c}${O3}${d})${O4}${e})`,
+        `(${a}${O1}(${b}${O2}${c}))${O3}${d}${O4}${e}`,
+        `${a}${O1}(${b}${O2}(${c}${O3}${d}))${O4}${e}`,
+        `${a}${O1}${b}${O2}(${c}${O3}(${d}${O4}${e}))`,
+        `((${a}${O1}${b})${O2}${c}${O3}${d})${O4}${e}`,
+        `(${a}${O1}(${b}${O2}${c})${O3}${d})${O4}${e}`,
+        `(${a}${O1}${b}${O2}(${c}${O3}${d}))${O4}${e}`,
+        `${a}${O1}((${b}${O2}${c})${O3}${d}${O4}${e})`,
+        `${a}${O1}(${b}${O2}(${c}${O3}${d})${O4}${e})`,
+        `${a}${O1}(${b}${O2}${c}${O3}(${d}${O4}${e}))`,
+        `((${a}${O1}${b}${O2}${c})${O3}${d})${O4}${e}`,
+        `(${a}${O1}(${b}${O2}${c}${O3}${d}))${O4}${e}`,
+        `${a}${O1}((${b}${O2}${c}${O3}${d})${O4}${e})`,
+        `${a}${O1}(${b}${O2}(${c}${O3}${d}${O4}${e}))`,
+        `((${a}${O1}${b})${O2}${c})${O3}(${d}${O4}${e})`,
+        `(${a}${O1}(${b}${O2}${c}))${O3}(${d}${O4}${e})`,
+        `(${a}${O1}${b})${O2}((${c}${O3}${d})${O4}${e})`,
+        `(${a}${O1}${b})${O2}(${c}${O3}(${d}${O4}${e}))`,
+        `((${a}${O1}${b})${O2}(${c}${O3}${d}))${O4}${e}`,
+        `${a}${O1}((${b}${O2}${c})${O3}(${d}${O4}${e}))`,
+        `(((${a}${O1}${b})${O2}${c})${O3}${d})${O4}${e}`,
+        `((${a}${O1}(${b}${O2}${c}))${O3}${d})${O4}${e}`,
+        `(${a}${O1}((${b}${O2}${c})${O3}${d}))${O4}${e}`,
+        `(${a}${O1}(${b}${O2}(${c}${O3}${d})))${O4}${e}`,
+        `${a}${O1}(((${b}${O2}${c})${O3}${d})${O4}${e})`,
+        `${a}${O1}((${b}${O2}(${c}${O3}${d}))${O4}${e})`,
+        `${a}${O1}(${b}${O2}((${c}${O3}${d})${O4}${e}))`,
+        `${a}${O1}(${b}${O2}(${c}${O3}(${d}${O4}${e})))`,
+      ]
 
-      results.push(`${calcFormula}=${calcResult}`)
+      for (let i = 0; i < bracketsPatterns.length; i++) {
+        const calcFormula = bracketsPatterns[i]
+        const calcResult = looseJsonParse(calcFormula)
+
+        if (calcResult !== answer) continue
+
+        resultCount++
+        if (resultCount > 10) {
+          return
+        }
+        results.push(`${calcFormula}=${calcResult}`)
+      }
 
       return
     }
